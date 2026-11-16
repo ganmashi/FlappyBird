@@ -49,7 +49,7 @@ fn rect_hit(
 }
 
 fn draw_centered(text: &str, y: f32, size: f32, color: Color) {
-    let tw = measure_text(text, None, size as u32, 1.0).width;
+    let tw = measure_text(text, None, size as u16, 1.0).width;
     draw_text(text, (screen_width() - tw) / 2.0, y, size, color);
 }
 
