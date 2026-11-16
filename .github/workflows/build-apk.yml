@@ -40,7 +40,7 @@ jobs:
           yes | sdkmanager --licenses > /dev/null || true
           sdkmanager --install "platform-tools" "platforms;android-29" "platforms;android-34" "build-tools;34.0.0" "ndk;$NDK_VER"
           NDKBIN="$SDK/ndk/$NDK_VER/toolchains/llvm/prebuilt/linux-x86_64/bin"
-          for t in aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android; do
+          for t in aarch64-linux-android armv7-linux-androideabi arm-linux-androideabi i686-linux-android x86_64-linux-android; do
             for tool in ar ranlib readelf objcopy strip nm objdump; do
               ln -sf "llvm-$tool" "$NDKBIN/$t-$tool"
             done
