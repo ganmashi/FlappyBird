@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           SDK="$HOME/android-sdk"
-          NDK_VER="21.4.7075529"
+          NDK_VER="26.1.10909125"
           mkdir -p "$SDK/cmdline-tools"
           cd "$SDK/cmdline-tools"
           curl -sSLo tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
@@ -40,10 +40,16 @@ jobs:
           yes | sdkmanager --licenses > /dev/null || true
           sdkmanager --install "platform-tools" "platforms;android-29" "platforms;android-34" "build-tools;34.0.0" "ndk;$NDK_VER"
           NDKBIN="$SDK/ndk/$NDK_VER/toolchains/llvm/prebuilt/linux-x86_64/bin"
-          for t in aarch64-linux-android armv7-linux-androideabi arm-linux-androideabi i686-linux-android x86_64-linux-android; do
+          for t in aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android; do
             ln -sf llvm-ar "$NDKBIN/$t-ar"
             ln -sf llvm-ranlib "$NDKBIN/$t-ranlib"
           done
+          mk_ld() {
+            printf '#!/bin/sh\nexec "%s/clang" --target=%s "$@"\n' "$NDKBIN" "$2" > "$NDKBIN/$1"
+            chmod +x "$NDKBIN/$1"
+          }
+          mk_ld aarch64-linux-android-ld aarch64-linux-android21
+          mk_ld armv7-linux-androideabi-ld armv7a-linux-androideabi21
           echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$SDK/ndk/$NDK_VER" >> "$GITHUB_ENV"
