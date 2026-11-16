@@ -43,13 +43,8 @@ jobs:
           for t in aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android; do
             ln -sf llvm-ar "$NDKBIN/$t-ar"
             ln -sf llvm-ranlib "$NDKBIN/$t-ranlib"
+            ln -sf ld.lld "$NDKBIN/$t-ld"
           done
-          mk_ld() {
-            printf '#!/bin/sh\nexec "%s/clang" --target=%s "$@"\n' "$NDKBIN" "$2" > "$NDKBIN/$1"
-            chmod +x "$NDKBIN/$1"
-          }
-          mk_ld aarch64-linux-android-ld aarch64-linux-android21
-          mk_ld armv7-linux-androideabi-ld armv7a-linux-androideabi21
           echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$SDK/ndk/$NDK_VER" >> "$GITHUB_ENV"
