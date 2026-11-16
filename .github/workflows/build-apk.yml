@@ -1,0 +1,30 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build APK with cargo-apk docker image
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/root/src" \
+            -w /root/src \
+            notfl3/cargo-apk \
+            cargo quad-apk build --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flappy-rs-apk
+          path: target/android-artifacts/release/apk/*.apk
+          if-no-files-found: error
+          retention-days: 30
