@@ -73,7 +73,9 @@ async fn main() {
 
         let tap = is_mouse_button_pressed(MouseButton::Left)
             || is_key_pressed(KeyCode::Space)
-            || touches().iter().any(|t| t.started);
+            || touches()
+                .iter()
+                .any(|t| t.phase == macroquad::input::TouchPhase::Started);
 
         match state {
             State::Ready => {
