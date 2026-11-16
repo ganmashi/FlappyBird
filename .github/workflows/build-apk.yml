@@ -50,10 +50,9 @@ jobs:
           LW_R=$(find "$SDK/ndk/$NDK_VER" -name 'libunwind.a' -path '*/linux/arm/*' 2>/dev/null | head -1)
           echo "aarch64 libunwind: $LW_A"
           echo "arm libunwind: $LW_R"
-          FLAGS=""
-          if [ -n "$LW_A" ]; then FLAGS="$FLAGS -C link-arg=-L$(dirname "$LW_A")"; fi
-          if [ -n "$LW_R" ]; then FLAGS="$FLAGS -C link-arg=-L$(dirname "$LW_R")"; fi
-          echo "RUSTFLAGS=$FLAGS" >> "$GITHUB_ENV"
+          SYSROOT_LIB="$SDK/ndk/$NDK_VER/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
+          if [ -n "$LW_A" ]; then cp "$LW_A" "$SYSROOT_LIB/aarch64-linux-android/"; fi
+          if [ -n "$LW_R" ]; then cp "$LW_R" "$SYSROOT_LIB/arm-linux-androideabi/"; fi
           echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$SDK/ndk/$NDK_VER" >> "$GITHUB_ENV"
