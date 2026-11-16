@@ -13,37 +13,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Install Rust with Android targets
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install NDK and build tools
-        run: |
-          sdkmanager --install "ndk;26.1.10909125" "build-tools;34.0.0" "platforms;android-34"
-          echo "ANDROID_HOME=${ANDROID_SDK_ROOT}" >> "$GITHUB_ENV"
-          echo "ANDROID_NDK_HOME=${ANDROID_SDK_ROOT}/ndk/26.1.10909125" >> "$GITHUB_ENV"
-          echo "NDK_HOME=${ANDROID_SDK_ROOT}/ndk/26.1.10909125" >> "$GITHUB_ENV"
-
-      - name: Cache cargo registry and build
-        uses: Swatinem/rust-cache@v2
-
-      - name: Install cargo-quad-apk
-        run: cargo install cargo-quad-apk
-
-      - name: Build APK
+      - name: Build APK with cargo-apk docker image
         run: |
           set -o pipefail
-          cargo quad-apk build --release 2>&1 | tee build.log
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/root/src" \
+            -w /root/src \
+            notfl3/cargo-apk \
+            cargo quad-apk build --release 2>&1 | tee build.log
 
       - name: Upload build log
         if: always()
