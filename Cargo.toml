@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.4"
-fontdue = "=0.9.3"
 
 [package.metadata.android]
 build_targets = ["aarch64-linux-android", "armv7-linux-androideabi"]
